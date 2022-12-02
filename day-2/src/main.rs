@@ -12,9 +12,9 @@ fn main() {
                 'A' => {
                     // Rock
                     match you {
-                        'X' => 1 + 3,
-                        'Y' => 2 + 6,
-                        'Z' => 3 + 0,
+                        'X' => 3 + 0,
+                        'Y' => 1 + 3,
+                        'Z' => 2 + 6,
                         _ => unreachable!(),
                     }
                 }
@@ -30,9 +30,9 @@ fn main() {
                 'C' => {
                     // Scissors
                     match you {
-                        'X' => 1 + 6,
-                        'Y' => 2 + 0,
-                        'Z' => 3 + 3,
+                        'X' => 2 + 0,
+                        'Y' => 3 + 3,
+                        'Z' => 1 + 6,
                         _ => unreachable!(),
                     }
                 }
