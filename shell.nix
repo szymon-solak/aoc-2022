@@ -1,7 +1,6 @@
 let
-    # pin nixpkgs
-    # pkgs = import (fetchTarball "https://github.com/nixos/nixpkgs/archive/5658fadedb748cb0bdbcb569a53bd6065a5704a9.tar.gz") {};
-    pkgs = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/refs/tags/22.05.zip") {};
+    # pin nixpkgs - https://status.nixos.org/
+    pkgs = import (fetchTarball "https://github.com/nixos/nixpkgs/archive/596a8e828c5dfa504f91918d0fa4152db3ab5502.tar.gz") {};
 in
     pkgs.mkShell.override { stdenv = pkgs.clangStdenv; } {
         buildInputs = [
@@ -9,7 +8,7 @@ in
             pkgs.cargo
             pkgs.rustfmt
             pkgs.libclang
-	    pkgs.libiconv
+            pkgs.libiconv
         ];
 
         # Point bindgen to where the clang library would be
