@@ -3,8 +3,6 @@ use std::ops::Range;
 fn parse_to_range(input: &str) -> Range<u64> {
     let (start, end) = input.split_once("-").unwrap();
 
-    println!("parse_to_range {start} {end}");
-
     Range { start: start.parse::<u64>().unwrap() , end: end.parse::<u64>().unwrap() }
 }
 
@@ -20,7 +18,7 @@ fn main() {
         })
         .collect::<Vec<(Range<u64>, Range<u64>)>>();
 
-    let fully_overlapping_paris_count = pairs
+    let fully_overlapping_pairs_count = pairs
         .iter()
         .filter(|(l ,r)| {
             if l.start <= r.start && l.end >= r.end { return true }
@@ -30,5 +28,15 @@ fn main() {
         })
         .count();
 
-    println!("fully contained pairs: {fully_overlapping_paris_count}")
+    let overlapping_pairs_count = pairs
+        .iter()
+        .filter(|(l ,r)| {
+            if l.start >= r.start && l.start <= r.end { return true }
+            if r.start >= l.start && r.start <= l.end { return true }
+            return false
+        })
+        .count();
+
+    println!("fully contained pairs: {fully_overlapping_pairs_count}");
+    println!("overlapping pairs: {overlapping_pairs_count}");
 }
