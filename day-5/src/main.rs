@@ -82,8 +82,8 @@ impl Cargo {
         let crates_to_move = crates
             .drain(crates.len() - step.amount as usize..).collect::<Vec<char>>();
 
-        for c in crates_to_move.iter().rev() {
-            self.stacks.get_mut(step.to as usize).unwrap().push(*c);
+        for c in crates_to_move {
+            self.stacks.get_mut(step.to as usize).unwrap().push(c);
         }
         self
     }
@@ -133,6 +133,6 @@ move 1 from 1 to 2".trim_start();
         let crates_on_top = get_crates_on_top(initial_state, steps).iter().collect::<String>();
 
         // then
-        assert_eq!(crates_on_top, "CMZ")
+        assert_eq!(crates_on_top, "MCD")
     }
 }
