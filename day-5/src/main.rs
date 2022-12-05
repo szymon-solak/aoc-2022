@@ -68,19 +68,18 @@ impl FromStr for Step {
         Ok(Step {
             amount: amount.unwrap().parse::<u64>()?,
             from: from.unwrap().parse::<u64>()? - 1, // as index
-            to: to.unwrap().parse::<u64>()? - 1, // as index
+            to: to.unwrap().parse::<u64>()? - 1,     // as index
         })
     }
 }
 
 impl Cargo {
     fn apply(&mut self, step: &Step) -> &mut Cargo {
-        let crates = self.stacks
-            .get_mut(step.from as usize)
-            .unwrap();
+        let crates = self.stacks.get_mut(step.from as usize).unwrap();
 
         let crates_to_move = crates
-            .drain(crates.len() - step.amount as usize..).collect::<Vec<char>>();
+            .drain(crates.len() - step.amount as usize..)
+            .collect::<Vec<char>>();
 
         for c in crates_to_move {
             self.stacks.get_mut(step.to as usize).unwrap().push(c);
@@ -89,7 +88,11 @@ impl Cargo {
     }
 
     fn get_top_crates(&self) -> Vec<char> {
-        self.stacks.iter().filter_map(|stack| { stack.last() }).map(|c| c.to_owned()).collect()
+        self.stacks
+            .iter()
+            .filter_map(|stack| stack.last())
+            .map(|c| c.to_owned())
+            .collect()
     }
 }
 
@@ -97,7 +100,7 @@ fn get_crates_on_top(initial_state: &str, steps: &str) -> Vec<char> {
     let mut cargo = initial_state.parse::<Cargo>().unwrap();
 
     let steps = steps.lines().map(|step| step.parse::<Step>().unwrap());
-    let final_state = steps.fold(&mut cargo, |state, step| {state.apply(&step)});
+    let final_state = steps.fold(&mut cargo, |state, step| state.apply(&step));
 
     final_state.get_top_crates()
 }
@@ -105,14 +108,16 @@ fn get_crates_on_top(initial_state: &str, steps: &str) -> Vec<char> {
 fn main() {
     let input = std::fs::read_to_string("input.txt").unwrap();
     let (initial_state, steps) = input.split_once("\n\n").unwrap();
-    let crates_on_top = get_crates_on_top(initial_state, steps).iter().collect::<String>();
+    let crates_on_top = get_crates_on_top(initial_state, steps)
+        .iter()
+        .collect::<String>();
 
     println!("{crates_on_top:?}");
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{get_crates_on_top};
+    use crate::get_crates_on_top;
 
     #[test]
     fn example_case() {
@@ -127,10 +132,13 @@ mod tests {
 move 1 from 2 to 1
 move 3 from 1 to 3
 move 2 from 2 to 1
-move 1 from 1 to 2".trim_start();
+move 1 from 1 to 2"
+            .trim_start();
 
         // when
-        let crates_on_top = get_crates_on_top(initial_state, steps).iter().collect::<String>();
+        let crates_on_top = get_crates_on_top(initial_state, steps)
+            .iter()
+            .collect::<String>();
 
         // then
         assert_eq!(crates_on_top, "MCD")
