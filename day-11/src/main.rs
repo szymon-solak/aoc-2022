@@ -5,11 +5,13 @@ mod monkey;
 use monkey::Monkey;
 
 fn process_round(monkeys: &mut [Monkey]) {
+    let simplify_worry_level = monkeys.iter().map(|m| m.test).product::<u64>();
+
     for monkey_index in 0..monkeys.len() {
        let monkey = &mut monkeys[monkey_index].clone();
 
        for worry_level in monkey.items.iter().copied() {
-            let (receiver, new_worry_level) = monkey.process_item(worry_level);
+            let (receiver, new_worry_level) = monkey.process_item(worry_level % simplify_worry_level);
             monkeys[receiver as usize].items.push(new_worry_level);
         } 
 
@@ -26,7 +28,7 @@ fn main() -> color_eyre::eyre::Result<(), color_eyre::eyre::Report> {
         .filter_map(|segment| segment.parse::<Monkey>().ok())
         .collect();
 
-    for _round in 0..20 {
+    for _round in 0..10_000 {
         process_round(&mut monkeys);
     }
 

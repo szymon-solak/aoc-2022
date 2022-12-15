@@ -11,8 +11,8 @@ enum Operation {
 pub(crate) struct Monkey {
     pub items: Vec<u64>,
     pub inspection_count: u64,
+    pub test: u64,
     operation: Operation,
-    test: u64,
     throw_to_if_sucess: u64,
     throw_to_if_failure: u64,
 }
@@ -25,13 +25,12 @@ impl Monkey {
             Operation::Square => worry_level * worry_level,
         };
 
-        let after_div = after_op.div_floor(3);
-        let test_successful = after_div.rem(self.test) == 0;
+        let test_successful = after_op.rem(self.test) == 0;
 
         if test_successful {
-            (self.throw_to_if_sucess, after_div)
+            (self.throw_to_if_sucess, after_op)
         } else {
-            (self.throw_to_if_failure, after_div)
+            (self.throw_to_if_failure, after_op)
         }
     }
 }
