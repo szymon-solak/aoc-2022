@@ -1,4 +1,7 @@
-use std::{collections::{HashSet, VecDeque, HashMap}, vec};
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    vec,
+};
 
 #[derive(Debug, PartialEq)]
 enum Mark {
@@ -30,7 +33,7 @@ fn get_traversable_neighbours(heightmap: &Vec<Vec<Mark>>, pos: Position) -> Vec<
         (pos.0, pos.1 + 1),
     ]
     .into_iter()
-    .filter(|&(x, y)| { !(x == pos.0 && y == pos.1) })
+    .filter(|&(x, y)| !(x == pos.0 && y == pos.1))
     .filter(|(x, y)| {
         (*x > 0 || *y > 0) && *y < heightmap.len() as u64 && *x < heightmap[0].len() as u64
     })
@@ -44,15 +47,16 @@ fn get_traversable_neighbours(heightmap: &Vec<Vec<Mark>>, pos: Position) -> Vec<
 fn find_root_position(heightmap: &[Vec<Mark>]) -> Option<Position> {
     for (y, row) in heightmap.iter().enumerate() {
         for (x, mark) in row.iter().enumerate() {
-            if mark == &Mark::Start { return Some((x as u64, y as u64)) }
+            if mark == &Mark::Start {
+                return Some((x as u64, y as u64));
+            }
         }
     }
 
     None
 }
 
-fn find_shortes_path(heightmap: &Vec<Vec<Mark>>) -> Option<Vec<Position>> {
-    let root = find_root_position(heightmap).expect("start point should exist");
+fn find_shortes_path(root: Position, heightmap: &Vec<Vec<Mark>>) -> Option<Vec<Position>> {
     let mut explored = HashSet::<Position>::from([root]);
     let mut queue: VecDeque<Position> = VecDeque::from([root]);
     let mut parent_map = HashMap::<Position, Option<Position>>::from([(root, None)]);
@@ -71,7 +75,11 @@ fn find_shortes_path(heightmap: &Vec<Vec<Mark>>) -> Option<Vec<Position>> {
                 }
             }
 
-            return Some(path.iter().flat_map(|c| c.to_owned()).collect::<Vec<Position>>());
+            return Some(
+                path.iter()
+                    .flat_map(|c| c.to_owned())
+                    .collect::<Vec<Position>>(),
+            );
         }
 
         for neighbour in get_traversable_neighbours(heightmap, node).iter() {
@@ -100,9 +108,31 @@ fn main() {
         })
         .collect::<Vec<_>>();
 
-    let path = find_shortes_path(&heightmap).expect("path should not be empty");
+    let root = find_root_position(&heightmap).expect("start point should exist");
+    let path = find_shortes_path(root, &heightmap).expect("path should not be empty");
     let steps = path.len();
 
-    println!("{path:?}");
-    println!("in {steps:?} steps");
+    println!("part 1: in {steps:?} steps");
+
+    let width = heightmap[0].len() as u64;
+    let height = heightmap.len() as u64;
+    let min_distance_form_any_starting_point = vec![
+        (0..width)
+            .flat_map(|x| vec![(x, 0), (x, height - 1)])
+            .collect::<Vec<Position>>(),
+        (0..height)
+            .flat_map(|y| vec![(0, y), (width - 1, y)])
+            .collect::<Vec<Position>>(),
+    ]
+    .iter()
+    .flatten()
+    .filter(|pos| {
+        let height = heightmap[pos.1 as usize][pos.0 as usize].get_height();
+        height == 0
+    })
+    .filter_map(|&starting_point| find_shortes_path(starting_point, &heightmap))
+    .map(|path| path.len())
+    .min();
+
+    println!("part 2: {min_distance_form_any_starting_point:?}")
 }
